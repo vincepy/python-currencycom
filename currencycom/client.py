@@ -10,7 +10,7 @@ from requests.models import RequestEncodingMixin
 class CurrencyComConstants(object):
     HEADER_API_KEY_NAME = 'X-MBX-APIKEY'
     API_VERSION = 'v1'
-    BASE_URL = 'https://api-adapter.backend.currency.com/api/{}/'.format(
+    BASE_URL = 'https://demo-api-adapter.backend.currency.com/api/{}/'.format(
         API_VERSION
     )
 
@@ -31,6 +31,7 @@ class CurrencyComConstants(object):
     # Account Endpoints
     ACCOUNT_INFORMATION_ENDPOINT = BASE_URL + 'account'
     ACCOUNT_TRADE_LIST_ENDPOINT = BASE_URL + 'myTrades'
+    ACCOUNT_TRADING_POSITIONS_HISTORY = 'https://demo-api-adapter.backend.currency.com/api/v2/tradingPositionsHistory'
 
     # Order Endpoints
     ORDER_ENDPOINT = BASE_URL + 'order'
@@ -494,6 +495,20 @@ class Client(object):
             params['endTime'] = self._to_epoch_miliseconds(end_time)
 
         r = self._get(CurrencyComConstants.ACCOUNT_TRADE_LIST_ENDPOINT,
+                      **params)
+
+        return r.json()
+
+    def get_account_trading_positions_history(self, symbol,
+                               limit=100,
+                               recv_window=None):
+
+        self._validate_limit(limit)
+        self._validate_recv_window(recv_window)
+
+        params = {'symbol': symbol, 'limit': limit, 'recvWindow': recv_window}
+
+        r = self._get(CurrencyComConstants.ACCOUNT_TRADING_POSITIONS_HISTORY,
                       **params)
 
         return r.json()
